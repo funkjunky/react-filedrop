@@ -1,0 +1,15 @@
+{
+  "name": "react-filedrop",
+  "version": "0.1.1",
+  "description": "quick component to allow file dropping and create the effects for it.",
+  "keywords": [
+    "react"
+  ],
+  "homepage": "https://github.com/funkjunky/react-filedrop",
+  "repository": "funkjunky/react-filedrop",
+  "license": "GNUP",
+  "main": "filedrop.js",
+  "dependencies": {
+    "react": "0.13.*"
+  }
+}
