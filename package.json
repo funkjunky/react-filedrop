@@ -1,6 +1,6 @@
 {
   "name": "react-filedrop",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "quick component to allow file dropping and create the effects for it.",
   "keywords": [
     "react"
