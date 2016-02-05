@@ -36,12 +36,13 @@ var Filedrop = function(options) {
         dragEnter: function(event) {
             var dropZones = document.querySelectorAll('.dropZone');
             if(dragTally++ == 0) //Note: postfix important
-                for(var i=0; i!=dropZones.length; ++i)
+                for(var i=0; i!=dropZones.length; ++i) {
+                    this.defaultStyles[i] = {};
                     for(var key in options.dragStartStyle) {
-                        this.defaultStyles[i] = {};
                         this.defaultStyles[i][key] = dropZones[i].style[key];
                         dropZones[i].style[key] = options.dragStartStyle[key];
                     }
+                }
         },
         dragLeave: function(event) {
             var dropZones = document.querySelectorAll('.dropZone');
