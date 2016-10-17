@@ -55,12 +55,12 @@ var Filedrop = function(options) {
         localDragEnter: function(event) {
             if(this.localTally++ == 0)
                 for(var key in options.dragStartStyle)
-                    this.getDOMNode().style[key] = options.dragHoverStyle[key];
+                    event.target.style[key] = options.dragHoverStyle[key];
         },
         localDragLeave: function(event) {
             if(--this.localTally == 0)
                 for(var key in options.dragStartStyle)
-                    this.getDOMNode().style[key] = options.dragStartStyle[key];
+                    event.target.style[key] = options.dragStartStyle[key];
         },
     });
 };
