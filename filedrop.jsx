@@ -70,8 +70,14 @@ class FileDrop extends React.Component {
     )}
 
     handleDrop = (event) => {
-        event.preventDefault();
         this.props.onDrop(event);
+        console.log('handled drop?');
+        this.setState({
+            dragActive: false,
+            dragHover: false,
+            _localTally: 0,
+            _globalTally: 0
+        });
     }
 
     addEvents = () => {
