@@ -1,68 +1,99 @@
-var React = require('react');
-var Superagent = require('superagent');
+import React from 'react';
 
-var globalsAdded = false;
-var dragTally = 0;
-var Filedrop = function(options) {
-    return React.createClass({
-        localTally: 0,
-        defaultStyles: [],
-        componentDidMount: function() {
-            this.addEvents();
-        },
+class FileDrop extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            dragHovering: false,
+            dragActive: false,
+            _globalTally: 0,
+            _localTally: 0
+        };
 
-        render: function() {
-            return (
-                <div className="dropZone" style={{display: 'inline-block'}} onDrop={this.handleDrop} onDragEnter={this.localDragEnter} onDragLeave={this.localDragLeave}>
-                    {this.props.children}
-                </div>
-            );
-        },
+        this._dragEnter = () => {
+            if(this.state._globalTally == 0)
+                this.setState({ dragActive: true });
+            this.setState({ _globalTally: this.state._globalTally + 1 });
+        };
+        this._dragLeave = () => {
+            if(this.state._globalTally == 1)
+                this.setState({ dragActive: false });
+            this.setState({ _globalTally: this.state._globalTally - 1 });
+        }
+    }
 
-        handleDrop: function(event) {
-            event.preventDefault();
-            if(this.props.handleDrop)
-                this.props.handleDrop(event);
-        },
+    componentDidMount = () => {
+        this.addEvents();
+    }
 
-        addEvents: function() {
-            if(!globalsAdded) {
-                globalsAdded = true;
-                document.addEventListener('dragenter', this.dragEnter);
-                document.addEventListener('dragleave', this.dragLeave);
-            }
-        },
+    getClass = () => {
+        if(this.state.dragHover)
+            return this.props.hoverClass;
+        else if(this.state.dragActive)
+            return this.props.activeClass;
+        else
+            return this.props.className;
+    }
 
-        dragEnter: function(event) {
-            var dropZones = document.querySelectorAll('.dropZone');
-            if(dragTally++ == 0) //Note: postfix important
-                for(var i=0; i!=dropZones.length; ++i) {
-                    this.defaultStyles[i] = {};
-                    for(var key in options.dragStartStyle) {
-                        this.defaultStyles[i][key] = dropZones[i].style[key];
-                        dropZones[i].style[key] = options.dragStartStyle[key];
-                    }
-                }
-        },
-        dragLeave: function(event) {
-            var dropZones = document.querySelectorAll('.dropZone');
-            if(--dragTally == 0)
-                for(var i=0; i!=dropZones.length; ++i)
-                    for(var key in options.dragStartStyle)
-                        dropZones[i].style[key] = this.defaultStyles[i][key];
-        },
+    dragEnter = () => {
+        if(this.state._localTally == 0)
+            this.setState({ dragHover: true });
+        this.setState({ _localTally: this.state._localTally + 1 });
+    }
 
-        localDragEnter: function(event) {
-            if(this.localTally++ == 0)
-                for(var key in options.dragStartStyle)
-                    event.target.style[key] = options.dragHoverStyle[key];
-        },
-        localDragLeave: function(event) {
-            if(--this.localTally == 0)
-                for(var key in options.dragStartStyle)
-                    event.target.style[key] = options.dragStartStyle[key];
-        },
-    });
+    dragLeave = () => {
+        if(this.state._localTally == 1)
+            this.setState({ dragHover: false });
+        this.setState({ _localTally: this.state._localTally - 1 });
+    }
+
+    getStyle = () => {
+        if(this.state.dragHover)
+            return this.props.hoverStyle;
+        else if(this.state.dragActive)
+            return this.props.activeStyle;
+        else
+            return this.props.style;
+    }
+
+    render = () => {
+        return (
+        <div
+            className={ this.getClass() }
+            style={ this.getStyle() }
+            onDrop={ this.handleDrop }
+            onDragEnter={ () => this.dragEnter() }
+            onDragLeave={ () => this.dragLeave() }
+        >
+            { this.props.children }
+        </div>
+    )}
+
+    handleDrop = (event) => {
+        event.preventDefault();
+        this.props.onDrop(event);
+    }
+
+    addEvents = () => {
+        document.addEventListener('dragenter', this._dragEnter);
+        document.addEventListener('dragleave', this._dragLeave);
+    }
+
+    componentWillUnmount = () => {
+        document.removeEventListener('dragenter', this._dragEnter);
+        document.removeEventListener('dragleave', this._dragLeave);
+    }
+}
+
+FileDrop.defaultProps = {
+    hoverClass: '',
+    activeClass: '',
+    hoverStyle: {},
+    activeStyle: {},
+    onDrop: () => {},
+
+    style: {},
+    className: ''
 };
 
-module.exports = Filedrop;
+export default FileDrop;
